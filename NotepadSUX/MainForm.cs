@@ -259,6 +259,7 @@ namespace NotepadXD
             {
                 int search_from = textBox1.SelectionStart + textBox1.SelectionLength;
                 int idx;
+                bool wrap_around = findForm.get_wrapAround_checked();
 
                 if (findForm.get_matchCase_checked())
                 {
@@ -268,14 +269,25 @@ namespace NotepadXD
                 {
                     idx = textBox1.Text.IndexOf(search_term, search_from, StringComparison.OrdinalIgnoreCase);
                 }
-                
+
+                if(idx < 0 && wrap_around)
+                {
+                    if (findForm.get_matchCase_checked())
+                    {
+                        idx = textBox1.Text.IndexOf(search_term, 0, StringComparison.Ordinal);
+                    }
+                    else
+                    {
+                        idx = textBox1.Text.IndexOf(search_term, 0, StringComparison.OrdinalIgnoreCase);
+                    }
+                }
+
                 if(idx < 0)
                 {
                     DoCannotFindSearchTermAction(search_term);
                 }
                 else
                 {
-                    findForm.Hide();
                     textBox1.SelectionStart = idx;
                     textBox1.SelectionLength = search_term.Length;
                 }
@@ -293,6 +305,7 @@ namespace NotepadXD
             else
             {
                 int idx;
+                bool wrap_around = findForm.get_wrapAround_checked();
                 int start = textBox1.SelectionStart;
                 int length = start - 1;
 
@@ -305,13 +318,24 @@ namespace NotepadXD
                     idx = textBox1.Text.LastIndexOf(search_term, start, StringComparison.OrdinalIgnoreCase);
                 }
 
+                if (idx < 0 && wrap_around)
+                {
+                    if (findForm.get_matchCase_checked())
+                    {
+                        idx = textBox1.Text.LastIndexOf(search_term, textBox1.Text.Length, StringComparison.Ordinal);
+                    }
+                    else
+                    {
+                        idx = textBox1.Text.LastIndexOf(search_term, textBox1.Text.Length, StringComparison.OrdinalIgnoreCase);
+                    }
+                }
+
                 if (idx < 0)
                 {
                     DoCannotFindSearchTermAction(search_term);
                 }
                 else
                 {
-                    findForm.Hide();
                     textBox1.SelectionStart = idx;
                     textBox1.SelectionLength = search_term.Length;
                 }

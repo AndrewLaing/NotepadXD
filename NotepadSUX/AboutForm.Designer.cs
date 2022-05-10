@@ -69,7 +69,7 @@
             // pictureBox1
             // 
             this.pictureBox1.Image = global::NotepadXD.Properties.Resources.NotepadXD;
-            this.pictureBox1.Location = new System.Drawing.Point(56, 8);
+            this.pictureBox1.Location = new System.Drawing.Point(48, 8);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(88, 88);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
