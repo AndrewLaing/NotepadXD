@@ -79,9 +79,9 @@
             // label2
             // 
             this.label2.BackColor = System.Drawing.SystemColors.ScrollBar;
-            this.label2.Location = new System.Drawing.Point(27, 110);
+            this.label2.Location = new System.Drawing.Point(27, 112);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(398, 2);
+            this.label2.Size = new System.Drawing.Size(389, 2);
             this.label2.TabIndex = 3;
             // 
             // label1
