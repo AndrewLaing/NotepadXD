@@ -34,10 +34,10 @@
             this.label1 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.directionGroupBox = new System.Windows.Forms.GroupBox();
-            this.matchCaseCheckBox = new System.Windows.Forms.CheckBox();
-            this.wrapCheckBox = new System.Windows.Forms.CheckBox();
             this.downRadioButton = new System.Windows.Forms.RadioButton();
             this.upRadioButton = new System.Windows.Forms.RadioButton();
+            this.matchCaseCheckBox = new System.Windows.Forms.CheckBox();
+            this.wrapCheckBox = new System.Windows.Forms.CheckBox();
             this.directionGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -94,26 +94,6 @@
             this.directionGroupBox.TabStop = false;
             this.directionGroupBox.Text = "Direction";
             // 
-            // matchCaseCheckBox
-            // 
-            this.matchCaseCheckBox.AutoSize = true;
-            this.matchCaseCheckBox.Location = new System.Drawing.Point(8, 80);
-            this.matchCaseCheckBox.Name = "matchCaseCheckBox";
-            this.matchCaseCheckBox.Size = new System.Drawing.Size(82, 17);
-            this.matchCaseCheckBox.TabIndex = 5;
-            this.matchCaseCheckBox.Text = "Match case";
-            this.matchCaseCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // wrapCheckBox
-            // 
-            this.wrapCheckBox.AutoSize = true;
-            this.wrapCheckBox.Location = new System.Drawing.Point(8, 104);
-            this.wrapCheckBox.Name = "wrapCheckBox";
-            this.wrapCheckBox.Size = new System.Drawing.Size(88, 17);
-            this.wrapCheckBox.TabIndex = 6;
-            this.wrapCheckBox.Text = "Wrap around";
-            this.wrapCheckBox.UseVisualStyleBackColor = true;
-            // 
             // downRadioButton
             // 
             this.downRadioButton.AutoSize = true;
@@ -138,6 +118,26 @@
             this.upRadioButton.UseVisualStyleBackColor = true;
             this.upRadioButton.CheckedChanged += new System.EventHandler(this.upRadioButton_CheckedChanged);
             // 
+            // matchCaseCheckBox
+            // 
+            this.matchCaseCheckBox.AutoSize = true;
+            this.matchCaseCheckBox.Location = new System.Drawing.Point(8, 80);
+            this.matchCaseCheckBox.Name = "matchCaseCheckBox";
+            this.matchCaseCheckBox.Size = new System.Drawing.Size(82, 17);
+            this.matchCaseCheckBox.TabIndex = 5;
+            this.matchCaseCheckBox.Text = "Match case";
+            this.matchCaseCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // wrapCheckBox
+            // 
+            this.wrapCheckBox.AutoSize = true;
+            this.wrapCheckBox.Location = new System.Drawing.Point(8, 104);
+            this.wrapCheckBox.Name = "wrapCheckBox";
+            this.wrapCheckBox.Size = new System.Drawing.Size(88, 17);
+            this.wrapCheckBox.TabIndex = 6;
+            this.wrapCheckBox.Text = "Wrap around";
+            this.wrapCheckBox.UseVisualStyleBackColor = true;
+            // 
             // FindForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -157,6 +157,7 @@
             this.MinimizeBox = false;
             this.Name = "FindForm";
             this.Text = "Find";
+            this.TopMost = true;
             this.Deactivate += new System.EventHandler(this.FindForm_Deactivate);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FindForm_FormClosing);
             this.directionGroupBox.ResumeLayout(false);

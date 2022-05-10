@@ -63,6 +63,14 @@ namespace NotepadXD
             return MessageBox.Show(msg, caption, buttons);
         }
 
+        private void DoCannotFindSearchTermAction(string search_term)
+        {
+            String msg = "Cannot find \"" + search_term + "\"";
+            String caption = DEFAULT_APPNAME;
+            MessageBoxButtons buttons = MessageBoxButtons.OK;
+            MessageBox.Show(msg, caption, buttons, MessageBoxIcon.Information);
+        }
+
         private void UpdateMainFormText()
         {
             if(!textbox1_text_has_changed)
@@ -241,27 +249,72 @@ namespace NotepadXD
 
         private void findNextToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if(findForm.get_textBox1_Text().Length < 1)
+            string search_term = findForm.get_textBox1_Text();
+
+            if(search_term.Length < 1)
             {
                 findToolStripMenuItem_Click(sender, e);
             }
             else
             {
-                textBox1.Text = findForm.get_textBox1_Text();
-                textBox1.Text += " FIND NEXT";
+                int search_from = textBox1.SelectionStart + textBox1.SelectionLength;
+                int idx;
+
+                if (findForm.get_matchCase_checked())
+                {
+                    idx = textBox1.Text.IndexOf(search_term, search_from, StringComparison.Ordinal);
+                }
+                else
+                {
+                    idx = textBox1.Text.IndexOf(search_term, search_from, StringComparison.OrdinalIgnoreCase);
+                }
+                
+                if(idx < 0)
+                {
+                    DoCannotFindSearchTermAction(search_term);
+                }
+                else
+                {
+                    findForm.Hide();
+                    textBox1.SelectionStart = idx;
+                    textBox1.SelectionLength = search_term.Length;
+                }
             }
         }
 
         private void findPreviousToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (findForm.get_textBox1_Text().Length < 1)
+            string search_term = findForm.get_textBox1_Text();
+
+            if (search_term.Length < 1)
             {
                 findToolStripMenuItem_Click(sender, e);
             }
             else
             {
-                textBox1.Text = findForm.get_textBox1_Text();
-                textBox1.Text += " FIND PREVIOUS";
+                int idx;
+                int start = textBox1.SelectionStart;
+                int length = start - 1;
+
+                if (findForm.get_matchCase_checked())
+                {
+                    idx = textBox1.Text.LastIndexOf(search_term, start, StringComparison.Ordinal);
+                }
+                else
+                {
+                    idx = textBox1.Text.LastIndexOf(search_term, start, StringComparison.OrdinalIgnoreCase);
+                }
+
+                if (idx < 0)
+                {
+                    DoCannotFindSearchTermAction(search_term);
+                }
+                else
+                {
+                    findForm.Hide();
+                    textBox1.SelectionStart = idx;
+                    textBox1.SelectionLength = search_term.Length;
+                }
             }
         }
 

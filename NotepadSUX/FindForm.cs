@@ -24,14 +24,14 @@ namespace NotepadXD
             return textBox1.Text;
         }
 
-        public bool get_matchCase_enabled()
+        public bool get_matchCase_checked()
         {
-            return matchCaseCheckBox.Enabled;
+            return matchCaseCheckBox.Checked;
         }
 
-        public bool get_wrapAround_enabled()
+        public bool get_wrapAround_checked()
         {
-            return wrapCheckBox.Enabled;
+            return wrapCheckBox.Checked;
         }
 
         public bool get_searchDownwards()
@@ -47,7 +47,7 @@ namespace NotepadXD
 
         private void FindForm_Deactivate(object sender, EventArgs e)
         {
-            Hide();
+            //Hide();
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
