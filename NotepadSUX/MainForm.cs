@@ -13,6 +13,7 @@ namespace NotepadXD
         private const int MAX_STACK_SIZE = 1000;
 
         private AboutForm aboutform;
+        private FindForm findForm;
         private String current_filename;
         private bool new_file_opened = false;
         private bool textbox1_text_has_changed = false;
@@ -29,6 +30,8 @@ namespace NotepadXD
             UpdateMainFormText();
             current_textbox_fontsize = textBox1.Font.Size;
             aboutform = new AboutForm();
+            findForm = new FindForm();
+            findForm.findNextButton.Click += new System.EventHandler(this.findForm_findButton_Click);
         }
 
         private void ClearStacks()
@@ -230,6 +233,38 @@ namespace NotepadXD
             textBox1.SelectionLength = 0;
         }
 
+        private void findToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            findForm.Show();
+        }
+
+
+        private void findNextToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(findForm.get_textBox1_Text().Length < 1)
+            {
+                findToolStripMenuItem_Click(sender, e);
+            }
+            else
+            {
+                textBox1.Text = findForm.get_textBox1_Text();
+                textBox1.Text += " FIND NEXT";
+            }
+        }
+
+        private void findPreviousToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (findForm.get_textBox1_Text().Length < 1)
+            {
+                findToolStripMenuItem_Click(sender, e);
+            }
+            else
+            {
+                textBox1.Text = findForm.get_textBox1_Text();
+                textBox1.Text += " FIND PREVIOUS";
+            }
+        }
+
         private void selectAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             textBox1.SelectAll();
@@ -321,6 +356,18 @@ namespace NotepadXD
         {
             redoStack.Clear();
             undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart));
+        }
+
+        protected void findForm_findButton_Click(object sender, EventArgs e)
+        {
+            if(findForm.get_searchDownwards())
+            {
+                findNextToolStripMenuItem_Click(sender, e);
+            }
+            else
+            {
+                findPreviousToolStripMenuItem_Click(sender, e);
+            }
         }
     }
 
