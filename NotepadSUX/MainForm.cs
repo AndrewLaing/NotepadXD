@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 // find Implementation branch
+// push to https://github.com/AndrewLaing/NotepadXD
+
 namespace NotepadXD
 {
     public partial class MainForm : Form
@@ -243,6 +245,10 @@ namespace NotepadXD
 
         private void findToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (textBox1.SelectionLength > 0)
+            { 
+                findForm.set_textBox1_Text(textBox1.SelectedText);
+            }
             findForm.Show();
         }
 

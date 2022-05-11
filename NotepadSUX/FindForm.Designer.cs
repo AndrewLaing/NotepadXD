@@ -159,7 +159,6 @@
             this.Name = "FindForm";
             this.Text = "Find";
             this.TopMost = true;
-            this.Deactivate += new System.EventHandler(this.FindForm_Deactivate);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FindForm_FormClosing);
             this.directionGroupBox.ResumeLayout(false);
             this.directionGroupBox.PerformLayout();
