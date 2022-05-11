@@ -69,7 +69,7 @@
             // pictureBox1
             // 
             this.pictureBox1.Image = global::NotepadXD.Properties.Resources.NotepadXD;
-            this.pictureBox1.Location = new System.Drawing.Point(56, 8);
+            this.pictureBox1.Location = new System.Drawing.Point(48, 8);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(88, 88);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -79,9 +79,9 @@
             // label2
             // 
             this.label2.BackColor = System.Drawing.SystemColors.ScrollBar;
-            this.label2.Location = new System.Drawing.Point(27, 110);
+            this.label2.Location = new System.Drawing.Point(27, 112);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(398, 2);
+            this.label2.Size = new System.Drawing.Size(389, 2);
             this.label2.TabIndex = 3;
             // 
             // label1
@@ -117,6 +117,7 @@
             this.CausesValidation = false;
             this.ClientSize = new System.Drawing.Size(437, 564);
             this.Controls.Add(this.panel1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
