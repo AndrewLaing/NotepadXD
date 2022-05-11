@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
-// find Implementation branch
-// push to https://github.com/AndrewLaing/NotepadXD
 
 namespace NotepadXD
 {
@@ -16,6 +15,7 @@ namespace NotepadXD
 
         private AboutForm aboutform;
         private FindForm findForm;
+        private ReplaceForm replaceForm;
         private String current_filename;
         private bool new_file_opened = false;
         private bool textbox1_text_has_changed = false;
@@ -34,6 +34,10 @@ namespace NotepadXD
             aboutform = new AboutForm();
             findForm = new FindForm();
             findForm.findNextButton.Click += new System.EventHandler(this.findForm_findButton_Click);
+            replaceForm = new ReplaceForm();
+            replaceForm.findNextButton.Click += new System.EventHandler(this.replaceForm_findNextButton_Click);
+            replaceForm.replaceButton.Click += new System.EventHandler(this.replaceForm_replaceButton_Click);
+            replaceForm.replaceAllButton.Click += new System.EventHandler(this.replaceForm_replaceAllButton_Click);
         }
 
         private void ClearStacks()
@@ -252,6 +256,45 @@ namespace NotepadXD
             findForm.Show();
         }
 
+        private void findNextMatchAndHighlight(string search_term, bool wrap_around, bool match_case)
+        {
+            int search_from = textBox1.SelectionStart + textBox1.SelectionLength;
+            int idx;
+
+            if (match_case)
+            {
+                idx = textBox1.Text.IndexOf(search_term, search_from, StringComparison.Ordinal);
+            }
+            else
+            {
+                idx = textBox1.Text.IndexOf(search_term, search_from, StringComparison.OrdinalIgnoreCase);
+            }
+
+            if (idx < 0 && wrap_around)
+            {
+                if (findForm.get_matchCase_checked())
+                {
+                    idx = textBox1.Text.IndexOf(search_term, 0, StringComparison.Ordinal);
+                }
+                else
+                {
+                    idx = textBox1.Text.IndexOf(search_term, 0, StringComparison.OrdinalIgnoreCase);
+                }
+            }
+
+            if (idx < 0)
+            {
+                DoCannotFindSearchTermAction(search_term);
+            }
+            else
+            {
+                textBox1.SelectionStart = idx;
+                textBox1.SelectionLength = search_term.Length;
+                textBox1.ScrollToCaret();
+            }
+        }
+
+
 
         private void findNextToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -263,40 +306,9 @@ namespace NotepadXD
             }
             else
             {
-                int search_from = textBox1.SelectionStart + textBox1.SelectionLength;
-                int idx;
                 bool wrap_around = findForm.get_wrapAround_checked();
-
-                if (findForm.get_matchCase_checked())
-                {
-                    idx = textBox1.Text.IndexOf(search_term, search_from, StringComparison.Ordinal);
-                }
-                else
-                {
-                    idx = textBox1.Text.IndexOf(search_term, search_from, StringComparison.OrdinalIgnoreCase);
-                }
-
-                if(idx < 0 && wrap_around)
-                {
-                    if (findForm.get_matchCase_checked())
-                    {
-                        idx = textBox1.Text.IndexOf(search_term, 0, StringComparison.Ordinal);
-                    }
-                    else
-                    {
-                        idx = textBox1.Text.IndexOf(search_term, 0, StringComparison.OrdinalIgnoreCase);
-                    }
-                }
-
-                if(idx < 0)
-                {
-                    DoCannotFindSearchTermAction(search_term);
-                }
-                else
-                {
-                    textBox1.SelectionStart = idx;
-                    textBox1.SelectionLength = search_term.Length;
-                }
+                bool match_case = findForm.get_matchCase_checked();
+                findNextMatchAndHighlight(search_term, wrap_around, match_case);
             }
         }
 
@@ -344,8 +356,18 @@ namespace NotepadXD
                 {
                     textBox1.SelectionStart = idx;
                     textBox1.SelectionLength = search_term.Length;
+                    textBox1.ScrollToCaret();
                 }
             }
+        }
+
+        private void replaceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (textBox1.SelectionLength > 0)
+            {
+                replaceForm.set_findTextBox_Text(textBox1.SelectedText);
+            }
+            replaceForm.Show();
         }
 
         private void selectAllToolStripMenuItem_Click(object sender, EventArgs e)
@@ -451,6 +473,59 @@ namespace NotepadXD
             {
                 findPreviousToolStripMenuItem_Click(sender, e);
             }
+        }
+
+        protected void replaceForm_findNextButton_Click(object sender, EventArgs e)
+        {
+            string search_term = replaceForm.get_findTextBox_Text();
+
+            bool wrap_around = replaceForm.get_wrapAround_checked();
+            bool match_case = replaceForm.get_matchCase_checked();
+            findNextMatchAndHighlight(search_term, wrap_around, match_case);
+        }
+
+        protected void replaceForm_replaceButton_Click(object sender, EventArgs e)
+        {
+            if(textBox1.SelectedText == replaceForm.get_findTextBox_Text())
+            {
+                textBox1.SelectedText = replaceForm.get_replaceTextBox_Text();
+            }
+            replaceForm_findNextButton_Click(sender, e);
+        }
+
+        protected void replaceForm_replaceAllButton_Click(object sender, EventArgs e)
+        {
+            string search_term = replaceForm.get_findTextBox_Text();
+            string replace_term = replaceForm.get_replaceTextBox_Text();
+
+            if (replaceForm.get_matchCase_checked())
+            {
+                if(textBox1.Text.IndexOf(search_term, 0, StringComparison.Ordinal) >= 0)
+                {
+                    undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart));
+                    textBox1.Text = textBox1.Text.Replace(search_term, replace_term);
+                }
+                else
+                {
+                    return;
+                }
+            }
+            else
+            {
+                if(textBox1.Text.IndexOf(search_term, 0, StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart));
+                    textBox1.Text = Regex.Replace(textBox1.Text, search_term, replace_term,
+                                                  RegexOptions.IgnoreCase);
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            textBox1.SelectionStart = 0;
+            textBox1.SelectionLength = 0;
         }
     }
 

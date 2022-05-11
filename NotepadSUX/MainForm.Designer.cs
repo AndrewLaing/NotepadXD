@@ -47,6 +47,8 @@
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.findToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.findNextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.findPreviousToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timeDateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -76,8 +78,7 @@
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.printDialog1 = new System.Windows.Forms.PrintDialog();
             this.fontDialog1 = new System.Windows.Forms.FontDialog();
-            this.findNextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.findPreviousToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.replaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -170,6 +171,7 @@
             this.findToolStripMenuItem,
             this.findNextToolStripMenuItem,
             this.findPreviousToolStripMenuItem,
+            this.replaceToolStripMenuItem,
             this.toolStripSeparator1,
             this.selectAllToolStripMenuItem,
             this.timeDateToolStripMenuItem});
@@ -237,6 +239,22 @@
             this.findToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
             this.findToolStripMenuItem.Text = "Find";
             this.findToolStripMenuItem.Click += new System.EventHandler(this.findToolStripMenuItem_Click);
+            // 
+            // findNextToolStripMenuItem
+            // 
+            this.findNextToolStripMenuItem.Name = "findNextToolStripMenuItem";
+            this.findNextToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3;
+            this.findNextToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.findNextToolStripMenuItem.Text = "Find Next";
+            this.findNextToolStripMenuItem.Click += new System.EventHandler(this.findNextToolStripMenuItem_Click);
+            // 
+            // findPreviousToolStripMenuItem
+            // 
+            this.findPreviousToolStripMenuItem.Name = "findPreviousToolStripMenuItem";
+            this.findPreviousToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F3)));
+            this.findPreviousToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.findPreviousToolStripMenuItem.Text = "Find Previous    ";
+            this.findPreviousToolStripMenuItem.Click += new System.EventHandler(this.findPreviousToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
@@ -463,21 +481,13 @@
             this.printDialog1.AllowSomePages = true;
             this.printDialog1.UseEXDialog = true;
             // 
-            // findNextToolStripMenuItem
+            // replaceToolStripMenuItem
             // 
-            this.findNextToolStripMenuItem.Name = "findNextToolStripMenuItem";
-            this.findNextToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3;
-            this.findNextToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
-            this.findNextToolStripMenuItem.Text = "Find Next";
-            this.findNextToolStripMenuItem.Click += new System.EventHandler(this.findNextToolStripMenuItem_Click);
-            // 
-            // findPreviousToolStripMenuItem
-            // 
-            this.findPreviousToolStripMenuItem.Name = "findPreviousToolStripMenuItem";
-            this.findPreviousToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F3)));
-            this.findPreviousToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
-            this.findPreviousToolStripMenuItem.Text = "Find Previous    ";
-            this.findPreviousToolStripMenuItem.Click += new System.EventHandler(this.findPreviousToolStripMenuItem_Click);
+            this.replaceToolStripMenuItem.Name = "replaceToolStripMenuItem";
+            this.replaceToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.H)));
+            this.replaceToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.replaceToolStripMenuItem.Text = "Replace...";
+            this.replaceToolStripMenuItem.Click += new System.EventHandler(this.replaceToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -551,6 +561,7 @@
         private System.Windows.Forms.ToolStripMenuItem findToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem findNextToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem findPreviousToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem replaceToolStripMenuItem;
     }
 }
 
