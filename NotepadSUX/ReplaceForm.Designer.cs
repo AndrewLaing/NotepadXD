@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ReplaceForm));
             this.wrapCheckBox = new System.Windows.Forms.CheckBox();
             this.matchCaseCheckBox = new System.Windows.Forms.CheckBox();
             this.findTextBox = new System.Windows.Forms.TextBox();
@@ -159,6 +160,7 @@
             this.Controls.Add(this.replaceButton);
             this.Controls.Add(this.findNextButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ReplaceForm";
