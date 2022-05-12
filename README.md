@@ -6,4 +6,6 @@ Another Windows Notepad clone, with most of the functionality that you would exp
 
 ![Find text functionality](notepadXD_find.jpg)
 
+![Replace text functionality](notepadXD_replace.jpg)
+
 ![About Dialogue](notepadXD_about.jpg)
