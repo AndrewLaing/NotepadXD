@@ -50,24 +50,18 @@ namespace NotepadXD
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            if(textBox1.Text.Length < 1)
-            {
-                findNextButton.Enabled = false;
-            }
-            else
-            {
-                findNextButton.Enabled = true;
-            }
+            bool has_text = textBox1.Text.Length > 0;
+            findNextButton.Enabled = has_text;
         }
 
         private void upRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            searchDownwards = downRadioButton.Checked == true;
+            searchDownwards = downRadioButton.Checked;
         }
 
         private void downRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            searchDownwards = downRadioButton.Checked == true;
+            searchDownwards = downRadioButton.Checked;
         }
     }
 }

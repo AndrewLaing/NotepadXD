@@ -46,6 +46,37 @@ namespace NotepadXD
             redoStack.Clear();
         }
 
+        private bool ContinueWorkingOnCurrentDocument(object sender, EventArgs e)
+        {
+            if (textbox1_text_has_changed)
+            {
+                DialogResult save_result = ShowSaveChangesDialog();
+
+                if (save_result == DialogResult.Yes)
+                {
+                    saveAsToolStripMenuItem_Click(sender, e);
+                }
+                return save_result == DialogResult.Cancel;
+            }
+            return false;
+        }
+
+        private void DoCannotFindSearchTermAction(string search_term)
+        {
+            String msg = "Cannot find \"" + search_term + "\"";
+            String caption = DEFAULT_APPNAME;
+            MessageBoxButtons buttons = MessageBoxButtons.OK;
+            MessageBox.Show(msg, caption, buttons, MessageBoxIcon.Information);
+        }
+
+        private void DoNewFileOpened()
+        {
+            new_file_opened = true;
+            textbox1_text_has_changed = false;
+            UpdateMainFormText();
+            ClearStacks();
+        }
+
         private void RemoveItemsFromEndOfStack(Stack<Func<object>> toResize, int newSize)
         {
             Stack<Func<object>> resize = new Stack<Func<object>>();
@@ -69,75 +100,41 @@ namespace NotepadXD
             return MessageBox.Show(msg, caption, buttons);
         }
 
-        private void DoCannotFindSearchTermAction(string search_term)
-        {
-            String msg = "Cannot find \"" + search_term + "\"";
-            String caption = DEFAULT_APPNAME;
-            MessageBoxButtons buttons = MessageBoxButtons.OK;
-            MessageBox.Show(msg, caption, buttons, MessageBoxIcon.Information);
-        }
-
         private void UpdateMainFormText()
         {
             if(!textbox1_text_has_changed)
             {
                 this.Text = System.IO.Path.GetFileName(current_filename);
-                this.Text += " - " + DEFAULT_APPNAME;
             }
             else
             {
                 this.Text = "*" + System.IO.Path.GetFileName(current_filename);
-                this.Text += " - " + DEFAULT_APPNAME;
             }
+            this.Text += " - " + DEFAULT_APPNAME;
         }
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (textbox1_text_has_changed)
+            if(ContinueWorkingOnCurrentDocument(sender, e) == false)
             {
-                DialogResult save_result = ShowSaveChangesDialog();
-
-                if(save_result == DialogResult.Yes)
-                {
-                    saveAsToolStripMenuItem_Click(sender, e);
-                }
-                else if (save_result == DialogResult.Cancel)
-                {
-                    return;
-                }
+                current_filename = DEFAULT_FILENAME;
+                textBox1.Text = "";
+                DoNewFileOpened();
             }
-            new_file_opened = true;
-            current_filename = DEFAULT_FILENAME;
-            textBox1.Text = "";
-            textbox1_text_has_changed = false;
-            UpdateMainFormText();
-            ClearStacks();
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (textbox1_text_has_changed)
+            if (ContinueWorkingOnCurrentDocument(sender, e))
             {
-                DialogResult save_result = ShowSaveChangesDialog();
-
-                if (save_result == DialogResult.Yes)
-                {
-                    saveAsToolStripMenuItem_Click(sender, e);
-                }
-                else if (save_result == DialogResult.Cancel)
-                {
-                    return;
-                }
+                return;
             }
 
-            if(openFileDialog1.ShowDialog() == DialogResult.OK)
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 current_filename = openFileDialog1.FileName;
                 textBox1.Text = System.IO.File.ReadAllText(current_filename);
-                new_file_opened = true;
-                textbox1_text_has_changed = false;
-                UpdateMainFormText();
-                ClearStacks();
+                DoNewFileOpened();
                 undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart));
             }
         }
@@ -171,22 +168,12 @@ namespace NotepadXD
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (textbox1_text_has_changed)
+            if (ContinueWorkingOnCurrentDocument(sender, e) == false)
             {
-                DialogResult save_result = ShowSaveChangesDialog();
-
-                if (save_result == DialogResult.Yes)
-                {
-                    saveAsToolStripMenuItem_Click(sender, e);
-                }
-                else if (save_result == DialogResult.Cancel)
-                {
-                    return;
-                }
+                textbox1_text_has_changed = false;
+                this.Close();
+                Application.Exit();
             }
-            textbox1_text_has_changed = false;
-            this.Close();
-            Application.Exit();
         }
 
         private void undoToolStripMenuItem_Click(object sender, EventArgs e)
@@ -258,21 +245,21 @@ namespace NotepadXD
 
         private void findNextMatchAndHighlight(string search_term, bool wrap_around, bool match_case)
         {
-            int search_from = textBox1.SelectionStart + textBox1.SelectionLength;
+            int start_pos = textBox1.SelectionStart + textBox1.SelectionLength;
             int idx;
 
             if (match_case)
             {
-                idx = textBox1.Text.IndexOf(search_term, search_from, StringComparison.Ordinal);
+                idx = textBox1.Text.IndexOf(search_term, start_pos, StringComparison.Ordinal);
             }
             else
             {
-                idx = textBox1.Text.IndexOf(search_term, search_from, StringComparison.OrdinalIgnoreCase);
+                idx = textBox1.Text.IndexOf(search_term, start_pos, StringComparison.OrdinalIgnoreCase);
             }
 
             if (idx < 0 && wrap_around)
             {
-                if (findForm.get_matchCase_checked())
+                if (match_case)
                 {
                     idx = textBox1.Text.IndexOf(search_term, 0, StringComparison.Ordinal);
                 }
@@ -293,8 +280,6 @@ namespace NotepadXD
                 textBox1.ScrollToCaret();
             }
         }
-
-
 
         private void findNextToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -324,21 +309,21 @@ namespace NotepadXD
             {
                 int idx;
                 bool wrap_around = findForm.get_wrapAround_checked();
-                int start = textBox1.SelectionStart;
-                int length = start - 1;
+                bool match_case = findForm.get_matchCase_checked();
+                int start_pos = textBox1.SelectionStart;
 
-                if (findForm.get_matchCase_checked())
+                if (match_case)
                 {
-                    idx = textBox1.Text.LastIndexOf(search_term, start, StringComparison.Ordinal);
+                    idx = textBox1.Text.LastIndexOf(search_term, start_pos, StringComparison.Ordinal);
                 }
                 else
                 {
-                    idx = textBox1.Text.LastIndexOf(search_term, start, StringComparison.OrdinalIgnoreCase);
+                    idx = textBox1.Text.LastIndexOf(search_term, start_pos, StringComparison.OrdinalIgnoreCase);
                 }
 
                 if (idx < 0 && wrap_around)
                 {
-                    if (findForm.get_matchCase_checked())
+                    if (match_case)
                     {
                         idx = textBox1.Text.LastIndexOf(search_term, textBox1.Text.Length, StringComparison.Ordinal);
                     }
@@ -425,26 +410,16 @@ namespace NotepadXD
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (textbox1_text_has_changed)
+            if (ContinueWorkingOnCurrentDocument(sender, e))
             {
-                DialogResult save_result = ShowSaveChangesDialog();
-
-                if (save_result == DialogResult.Yes)
-                {
-                    saveAsToolStripMenuItem_Click(sender, e);
-                }
-                else if (save_result == DialogResult.Cancel)
-                {
-                    e.Cancel = true;
-                    return;
-                }
+                e.Cancel = true;
+                return;
             }
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            //Dont show '*' in title bar when new/existing file opened
-            if (new_file_opened)
+            if (new_file_opened)   //Dont show '*' in title bar when new/existing file opened
             {
                 new_file_opened = false;
                 return;
@@ -478,7 +453,6 @@ namespace NotepadXD
         protected void replaceForm_findNextButton_Click(object sender, EventArgs e)
         {
             string search_term = replaceForm.get_findTextBox_Text();
-
             bool wrap_around = replaceForm.get_wrapAround_checked();
             bool match_case = replaceForm.get_matchCase_checked();
             findNextMatchAndHighlight(search_term, wrap_around, match_case);
@@ -488,6 +462,7 @@ namespace NotepadXD
         {
             if(textBox1.SelectedText == replaceForm.get_findTextBox_Text())
             {
+                undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart));
                 textBox1.SelectedText = replaceForm.get_replaceTextBox_Text();
             }
             replaceForm_findNextButton_Click(sender, e);
@@ -531,6 +506,8 @@ namespace NotepadXD
 
     public static class Extensions
     {
+        // Used to create an object for the undo/redo stacks, saving the current text
+        // in the textbox and cursor position
         public static Func<TextBox> Text(this TextBox textBox, string text, int sel)
         {
             return () =>
@@ -542,4 +519,3 @@ namespace NotepadXD
         }
     }
 }
-

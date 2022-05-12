@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace NotepadXD
@@ -55,18 +48,11 @@ namespace NotepadXD
 
         private void findTextBox_TextChanged(object sender, EventArgs e)
         {
-            if (findTextBox.Text.Length < 1)
-            {
-                findNextButton.Enabled = false;
-                replaceButton.Enabled = false;
-                replaceAllButton.Enabled = false;
-            }
-            else
-            {
-                findNextButton.Enabled = true;
-                replaceButton.Enabled = true;
-                replaceAllButton.Enabled = true;
-            }
+            bool has_text = findTextBox.Text.Length > 0;
+
+            findNextButton.Enabled = has_text;
+            replaceButton.Enabled = has_text;
+            replaceAllButton.Enabled = has_text;
         }
     }
 }
