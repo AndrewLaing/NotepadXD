@@ -229,6 +229,15 @@ namespace NotepadXD
         {
             int start = textBox1.SelectionStart;
             int length = textBox1.SelectionLength;
+            if(length < 1)
+            {
+                if(textBox1.Text.Length > start)
+                {
+                    length = 1;   // Implement delete ahead
+                }
+                
+            }
+            undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart));
             textBox1.Text = textBox1.Text.Remove(start, length);
             textBox1.SelectionStart = start;
             textBox1.SelectionLength = 0;
