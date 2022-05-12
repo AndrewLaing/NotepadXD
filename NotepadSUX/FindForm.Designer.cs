@@ -45,7 +45,7 @@
             // 
             this.findNextButton.Enabled = false;
             this.findNextButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.findNextButton.Location = new System.Drawing.Point(328, 16);
+            this.findNextButton.Location = new System.Drawing.Point(344, 16);
             this.findNextButton.Name = "findNextButton";
             this.findNextButton.Size = new System.Drawing.Size(91, 24);
             this.findNextButton.TabIndex = 1;
@@ -55,7 +55,7 @@
             // cancelButton
             // 
             this.cancelButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cancelButton.Location = new System.Drawing.Point(328, 48);
+            this.cancelButton.Location = new System.Drawing.Point(344, 48);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(91, 24);
             this.cancelButton.TabIndex = 2;
@@ -77,7 +77,7 @@
             // 
             this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBox1.HideSelection = false;
-            this.textBox1.Location = new System.Drawing.Point(88, 16);
+            this.textBox1.Location = new System.Drawing.Point(104, 16);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(224, 22);
             this.textBox1.TabIndex = 0;
@@ -88,7 +88,7 @@
             this.directionGroupBox.Controls.Add(this.downRadioButton);
             this.directionGroupBox.Controls.Add(this.upRadioButton);
             this.directionGroupBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.directionGroupBox.Location = new System.Drawing.Point(176, 48);
+            this.directionGroupBox.Location = new System.Drawing.Point(192, 48);
             this.directionGroupBox.Name = "directionGroupBox";
             this.directionGroupBox.Size = new System.Drawing.Size(136, 40);
             this.directionGroupBox.TabIndex = 4;
@@ -144,7 +144,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(429, 129);
+            this.ClientSize = new System.Drawing.Size(444, 129);
             this.Controls.Add(this.wrapCheckBox);
             this.Controls.Add(this.matchCaseCheckBox);
             this.Controls.Add(this.directionGroupBox);
