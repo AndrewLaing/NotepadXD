@@ -12,6 +12,7 @@ namespace NotepadXD
         private const String DEFAULT_APPNAME = "NotepadXD";
         private const float MIN_TEXTBOX_FONTSIZE = 8;
         private const int MAX_STACK_SIZE = 1000;
+        private const float MAX_ZOOM_FACTOR = 5.0f; // 500%
 
         private AboutForm aboutform;
         private FindForm findForm;
@@ -98,6 +99,13 @@ namespace NotepadXD
             MessageBoxButtons buttons = MessageBoxButtons.YesNoCancel;
 
             return MessageBox.Show(msg, caption, buttons);
+        }
+
+        private void UpdateCaretPositionStatusLabel()
+        {
+            int line = textBox1.GetLineFromCharIndex(textBox1.SelectionStart);
+            int column = textBox1.SelectionStart - textBox1.GetFirstCharIndexFromLine(line);
+            caretPositionStatusLabel.Text = "Ln " + (line + 1) + ", Col " + (column + 1);
         }
 
         private void UpdateMainFormText()
@@ -379,6 +387,7 @@ namespace NotepadXD
         private void wordWrapToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
         {
             textBox1.WordWrap = wordWrapToolStripMenuItem.Checked;
+            UpdateCaretPositionStatusLabel();
         }
 
         private void fontToolStripMenuItem_Click(object sender, EventArgs e)
@@ -392,10 +401,20 @@ namespace NotepadXD
             }
         }
 
+        private void UpdateZoomStatusLabel(float newFontSize)
+        {
+            int percentage_of_original = (int)(newFontSize * (100.0 / current_textbox_fontsize)) ;
+            zoomStatusLabel.Text = percentage_of_original + "%";
+        }
+
         private void zoomInToolStripMenuItem_Click(object sender, EventArgs e)
         {
             float newFontSize = (textBox1.Font.Size + 1);
-            textBox1.Font = new Font(textBox1.Font.FontFamily, newFontSize);
+            if(newFontSize < (current_textbox_fontsize * MAX_ZOOM_FACTOR))
+            {
+                textBox1.Font = new Font(textBox1.Font.FontFamily, newFontSize);
+                UpdateZoomStatusLabel(newFontSize);
+            }
         }
 
         private void zoomOutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -404,12 +423,14 @@ namespace NotepadXD
             if(newFontSize > MIN_TEXTBOX_FONTSIZE)
             {
                 textBox1.Font = new Font(textBox1.Font.FontFamily, newFontSize);
+                UpdateZoomStatusLabel(newFontSize);
             }
         }
 
         private void restoreDefaultZoomToolStripMenuItem_Click(object sender, EventArgs e)
         {
             textBox1.Font = new Font(textBox1.Font.FontFamily, (current_textbox_fontsize));
+            UpdateZoomStatusLabel(current_textbox_fontsize);
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -428,6 +449,8 @@ namespace NotepadXD
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
+            UpdateCaretPositionStatusLabel();
+
             if (new_file_opened)   //Dont show '*' in title bar when new/existing file opened
             {
                 new_file_opened = false;
@@ -510,6 +533,26 @@ namespace NotepadXD
 
             textBox1.SelectionStart = 0;
             textBox1.SelectionLength = 0;
+        }
+
+        private void textBox1_MouseClick(object sender, MouseEventArgs e)
+        {
+            UpdateCaretPositionStatusLabel();
+        }
+
+        private void textBox1_KeyUp(object sender, KeyEventArgs e)
+        {
+            UpdateCaretPositionStatusLabel();
+        }
+
+        private void MainForm_SizeChanged(object sender, EventArgs e)
+        {
+            UpdateCaretPositionStatusLabel();
+        }
+
+        private void textBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            UpdateCaretPositionStatusLabel();
         }
     }
 
