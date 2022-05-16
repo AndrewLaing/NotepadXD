@@ -35,6 +35,15 @@ namespace NotepadXD
             return wrapCheckBox.Checked;
         }
 
+        private void findTextBox_TextChanged(object sender, EventArgs e)
+        {
+            bool has_text = findTextBox.Text.Length > 0;
+
+            findNextButton.Enabled = has_text;
+            replaceButton.Enabled = has_text;
+            replaceAllButton.Enabled = has_text;
+        }
+
         private void ReplaceForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             e.Cancel = true;
@@ -44,15 +53,6 @@ namespace NotepadXD
         private void cancelButton_Click(object sender, EventArgs e)
         {
             Hide();
-        }
-
-        private void findTextBox_TextChanged(object sender, EventArgs e)
-        {
-            bool has_text = findTextBox.Text.Length > 0;
-
-            findNextButton.Enabled = has_text;
-            replaceButton.Enabled = has_text;
-            replaceAllButton.Enabled = has_text;
         }
     }
 }

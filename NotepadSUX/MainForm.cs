@@ -12,6 +12,7 @@ namespace NotepadXD
         private const String DEFAULT_APPNAME = "NotepadXD";
         private const float MIN_TEXTBOX_FONTSIZE = 8;
         private const int MAX_STACK_SIZE = 1000;
+        private const float MAX_ZOOM_FACTOR = 5.0f; // 500%
 
         private AboutForm aboutform;
         private FindForm findForm;
@@ -31,6 +32,13 @@ namespace NotepadXD
             current_filename = DEFAULT_FILENAME;
             UpdateMainFormText();
             current_textbox_fontsize = textBox1.Font.Size;
+            InitialiseSecondaryForms();
+        }
+
+        #region "Helper functions"
+
+        private void InitialiseSecondaryForms()
+        {
             aboutform = new AboutForm();
             findForm = new FindForm();
             findForm.findNextButton.Click += new System.EventHandler(this.findForm_findButton_Click);
@@ -100,6 +108,13 @@ namespace NotepadXD
             return MessageBox.Show(msg, caption, buttons);
         }
 
+        private void UpdateCaretPositionStatusLabel()
+        {
+            int line = textBox1.GetLineFromCharIndex(textBox1.SelectionStart);
+            int column = textBox1.SelectionStart - textBox1.GetFirstCharIndexFromLine(line);
+            caretPositionStatusLabel.Text = "Ln " + (line + 1) + ", Col " + (column + 1);
+        }
+
         private void UpdateMainFormText()
         {
             if(!textbox1_text_has_changed)
@@ -112,6 +127,30 @@ namespace NotepadXD
             }
             this.Text += " - " + DEFAULT_APPNAME;
         }
+
+        #endregion
+
+
+        #region "MainForm Event Handlers"
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (ContinueWorkingOnCurrentDocument(sender, e))
+            {
+                e.Cancel = true;
+                return;
+            }
+        }
+
+        private void MainForm_SizeChanged(object sender, EventArgs e)
+        {
+            UpdateCaretPositionStatusLabel();
+        }
+
+        #endregion
+
+
+        #region "MenuStrip Event Handlers"
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -379,6 +418,7 @@ namespace NotepadXD
         private void wordWrapToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
         {
             textBox1.WordWrap = wordWrapToolStripMenuItem.Checked;
+            UpdateCaretPositionStatusLabel();
         }
 
         private void fontToolStripMenuItem_Click(object sender, EventArgs e)
@@ -392,10 +432,20 @@ namespace NotepadXD
             }
         }
 
+        private void UpdateZoomStatusLabel(float newFontSize)
+        {
+            int percentage_of_original = (int)(newFontSize * (100.0 / current_textbox_fontsize)) ;
+            zoomStatusLabel.Text = percentage_of_original + "%";
+        }
+
         private void zoomInToolStripMenuItem_Click(object sender, EventArgs e)
         {
             float newFontSize = (textBox1.Font.Size + 1);
-            textBox1.Font = new Font(textBox1.Font.FontFamily, newFontSize);
+            if(newFontSize < (current_textbox_fontsize * MAX_ZOOM_FACTOR))
+            {
+                textBox1.Font = new Font(textBox1.Font.FontFamily, newFontSize);
+                UpdateZoomStatusLabel(newFontSize);
+            }
         }
 
         private void zoomOutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -404,12 +454,14 @@ namespace NotepadXD
             if(newFontSize > MIN_TEXTBOX_FONTSIZE)
             {
                 textBox1.Font = new Font(textBox1.Font.FontFamily, newFontSize);
+                UpdateZoomStatusLabel(newFontSize);
             }
         }
 
         private void restoreDefaultZoomToolStripMenuItem_Click(object sender, EventArgs e)
         {
             textBox1.Font = new Font(textBox1.Font.FontFamily, (current_textbox_fontsize));
+            UpdateZoomStatusLabel(current_textbox_fontsize);
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -417,17 +469,15 @@ namespace NotepadXD
             aboutform.Show();
         }
 
-        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (ContinueWorkingOnCurrentDocument(sender, e))
-            {
-                e.Cancel = true;
-                return;
-            }
-        }
+        #endregion
+
+
+        #region "textBox1 Event Handlers"
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
+            UpdateCaretPositionStatusLabel();
+
             if (new_file_opened)   //Dont show '*' in title bar when new/existing file opened
             {
                 new_file_opened = false;
@@ -447,6 +497,26 @@ namespace NotepadXD
             undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart));
         }
 
+        private void textBox1_MouseClick(object sender, MouseEventArgs e)
+        {
+            UpdateCaretPositionStatusLabel();
+        }
+
+        private void textBox1_KeyUp(object sender, KeyEventArgs e)
+        {
+            UpdateCaretPositionStatusLabel();
+        }
+
+        private void textBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            UpdateCaretPositionStatusLabel();
+        }
+
+        #endregion
+
+
+        #region "findForm Event Handlers"
+
         protected void findForm_findButton_Click(object sender, EventArgs e)
         {
             if(findForm.get_searchDownwards())
@@ -458,6 +528,11 @@ namespace NotepadXD
                 findPreviousToolStripMenuItem_Click(sender, e);
             }
         }
+
+        #endregion
+
+
+        #region "replaceForm Event Handlers"
 
         protected void replaceForm_findNextButton_Click(object sender, EventArgs e)
         {
@@ -488,10 +563,8 @@ namespace NotepadXD
                 {
                     undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart));
                     textBox1.Text = textBox1.Text.Replace(search_term, replace_term);
-                }
-                else
-                {
-                    return;
+                    textBox1.SelectionStart = 0;
+                    textBox1.SelectionLength = 0;
                 }
             }
             else
@@ -501,28 +574,26 @@ namespace NotepadXD
                     undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart));
                     textBox1.Text = Regex.Replace(textBox1.Text, search_term, replace_term,
                                                   RegexOptions.IgnoreCase);
-                }
-                else
-                {
-                    return;
+                    textBox1.SelectionStart = 0;
+                    textBox1.SelectionLength = 0;
                 }
             }
-
-            textBox1.SelectionStart = 0;
-            textBox1.SelectionLength = 0;
         }
+
+        #endregion
     }
 
     public static class Extensions
     {
-        // Used to create an object for the undo/redo stacks, saving the current text
-        // in the textbox and cursor position
-        public static Func<TextBox> Text(this TextBox textBox, string text, int sel)
+        /// <summary>
+        /// Used to store the text and cursor position from a textBox in the undo/redo stacks
+        /// </summary>
+        public static Func<TextBox> Text(this TextBox textBox, string text, int selectionStart)
         {
             return () =>
             {
                 textBox.Text = text;
-                textBox.SelectionStart = sel;
+                textBox.SelectionStart = selectionStart;
                 return textBox;
             };
         }
