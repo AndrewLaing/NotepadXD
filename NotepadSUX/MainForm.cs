@@ -464,6 +464,18 @@ namespace NotepadXD
             UpdateZoomStatusLabel(current_textbox_fontsize);
         }
 
+        private void viewStatusBarToolStripMenuItem_CheckStateChanged(object sender, EventArgs e)
+        {
+            if (viewStatusBarToolStripMenuItem.Checked)
+            {
+                statusStrip1.Show();
+            }
+            else
+            {
+                statusStrip1.Hide();
+            }
+        }
+
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             aboutform.Show();

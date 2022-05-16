@@ -85,6 +85,7 @@
             this.zoomStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.viewStatusBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -322,7 +323,8 @@
             // viewToolStripMenuItem
             // 
             this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.zoomToolStripMenuItem});
+            this.zoomToolStripMenuItem,
+            this.viewStatusBarToolStripMenuItem});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.viewToolStripMenuItem.Text = "View";
@@ -334,7 +336,7 @@
             this.zoomOutToolStripMenuItem,
             this.restoreDefaultZoomToolStripMenuItem});
             this.zoomToolStripMenuItem.Name = "zoomToolStripMenuItem";
-            this.zoomToolStripMenuItem.Size = new System.Drawing.Size(106, 22);
+            this.zoomToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.zoomToolStripMenuItem.Text = "Zoom";
             // 
             // zoomInToolStripMenuItem
@@ -555,6 +557,16 @@
             this.toolStripStatusLabel4.Text = "UTF-8";
             this.toolStripStatusLabel4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // viewStatusBarToolStripMenuItem
+            // 
+            this.viewStatusBarToolStripMenuItem.Checked = true;
+            this.viewStatusBarToolStripMenuItem.CheckOnClick = true;
+            this.viewStatusBarToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.viewStatusBarToolStripMenuItem.Name = "viewStatusBarToolStripMenuItem";
+            this.viewStatusBarToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.viewStatusBarToolStripMenuItem.Text = "Status Bar";
+            this.viewStatusBarToolStripMenuItem.CheckStateChanged += new System.EventHandler(this.viewStatusBarToolStripMenuItem_CheckStateChanged);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -638,6 +650,7 @@
         private System.Windows.Forms.ToolStripStatusLabel zoomStatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel4;
+        private System.Windows.Forms.ToolStripMenuItem viewStatusBarToolStripMenuItem;
     }
 }
 
