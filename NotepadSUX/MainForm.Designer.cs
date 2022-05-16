@@ -487,7 +487,6 @@
             // 
             // openFileDialog1
             // 
-            this.openFileDialog1.FileName = "openFileDialog1";
             this.openFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
             // 
             // saveFileDialog1

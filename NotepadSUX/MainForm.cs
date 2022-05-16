@@ -32,6 +32,13 @@ namespace NotepadXD
             current_filename = DEFAULT_FILENAME;
             UpdateMainFormText();
             current_textbox_fontsize = textBox1.Font.Size;
+            InitialiseSecondaryForms();
+        }
+
+        #region "Helper functions"
+
+        private void InitialiseSecondaryForms()
+        {
             aboutform = new AboutForm();
             findForm = new FindForm();
             findForm.findNextButton.Click += new System.EventHandler(this.findForm_findButton_Click);
@@ -120,6 +127,30 @@ namespace NotepadXD
             }
             this.Text += " - " + DEFAULT_APPNAME;
         }
+
+        #endregion
+
+
+        #region "MainForm Event Handlers"
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (ContinueWorkingOnCurrentDocument(sender, e))
+            {
+                e.Cancel = true;
+                return;
+            }
+        }
+
+        private void MainForm_SizeChanged(object sender, EventArgs e)
+        {
+            UpdateCaretPositionStatusLabel();
+        }
+
+        #endregion
+
+
+        #region "MenuStrip Event Handlers"
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -438,14 +469,10 @@ namespace NotepadXD
             aboutform.Show();
         }
 
-        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (ContinueWorkingOnCurrentDocument(sender, e))
-            {
-                e.Cancel = true;
-                return;
-            }
-        }
+        #endregion
+
+
+        #region "textBox1 Event Handlers"
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
@@ -470,6 +497,26 @@ namespace NotepadXD
             undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart));
         }
 
+        private void textBox1_MouseClick(object sender, MouseEventArgs e)
+        {
+            UpdateCaretPositionStatusLabel();
+        }
+
+        private void textBox1_KeyUp(object sender, KeyEventArgs e)
+        {
+            UpdateCaretPositionStatusLabel();
+        }
+
+        private void textBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            UpdateCaretPositionStatusLabel();
+        }
+
+        #endregion
+
+
+        #region "findForm Event Handlers"
+
         protected void findForm_findButton_Click(object sender, EventArgs e)
         {
             if(findForm.get_searchDownwards())
@@ -481,6 +528,11 @@ namespace NotepadXD
                 findPreviousToolStripMenuItem_Click(sender, e);
             }
         }
+
+        #endregion
+
+
+        #region "replaceForm Event Handlers"
 
         protected void replaceForm_findNextButton_Click(object sender, EventArgs e)
         {
@@ -511,10 +563,8 @@ namespace NotepadXD
                 {
                     undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart));
                     textBox1.Text = textBox1.Text.Replace(search_term, replace_term);
-                }
-                else
-                {
-                    return;
+                    textBox1.SelectionStart = 0;
+                    textBox1.SelectionLength = 0;
                 }
             }
             else
@@ -524,48 +574,26 @@ namespace NotepadXD
                     undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart));
                     textBox1.Text = Regex.Replace(textBox1.Text, search_term, replace_term,
                                                   RegexOptions.IgnoreCase);
-                }
-                else
-                {
-                    return;
+                    textBox1.SelectionStart = 0;
+                    textBox1.SelectionLength = 0;
                 }
             }
-
-            textBox1.SelectionStart = 0;
-            textBox1.SelectionLength = 0;
         }
 
-        private void textBox1_MouseClick(object sender, MouseEventArgs e)
-        {
-            UpdateCaretPositionStatusLabel();
-        }
-
-        private void textBox1_KeyUp(object sender, KeyEventArgs e)
-        {
-            UpdateCaretPositionStatusLabel();
-        }
-
-        private void MainForm_SizeChanged(object sender, EventArgs e)
-        {
-            UpdateCaretPositionStatusLabel();
-        }
-
-        private void textBox1_KeyDown(object sender, KeyEventArgs e)
-        {
-            UpdateCaretPositionStatusLabel();
-        }
+        #endregion
     }
 
     public static class Extensions
     {
-        // Used to create an object for the undo/redo stacks, saving the current text
-        // in the textbox and cursor position
-        public static Func<TextBox> Text(this TextBox textBox, string text, int sel)
+        /// <summary>
+        /// Used to store the text and cursor position from a textBox in the undo/redo stacks
+        /// </summary>
+        public static Func<TextBox> Text(this TextBox textBox, string text, int selectionStart)
         {
             return () =>
             {
                 textBox.Text = text;
-                textBox.SelectionStart = sel;
+                textBox.SelectionStart = selectionStart;
                 return textBox;
             };
         }
