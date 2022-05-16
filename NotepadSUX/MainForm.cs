@@ -215,6 +215,17 @@ namespace NotepadXD
             }
         }
 
+        private void editToolStripMenuItem_DropDownOpened(object sender, EventArgs e)
+        {
+            bool textSelected = textBox1.SelectionLength > 0;
+            cutToolStripMenuItem.Enabled = textSelected;
+            copyToolStripMenuItem.Enabled = textSelected;
+            deleteToolStripMenuItem.Enabled = textSelected;
+            googleSearchToolStripMenuItem.Enabled = textSelected;
+            undoToolStripMenuItem.Enabled = undoStack.Count > 0;
+            redoToolStripMenuItem.Enabled = redoStack.Count > 0;
+        }
+
         private void undoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (undoStack.Count > 0)
@@ -280,6 +291,16 @@ namespace NotepadXD
             textBox1.Text = textBox1.Text.Remove(start, length);
             textBox1.SelectionStart = start;
             textBox1.SelectionLength = 0;
+        }
+
+        private void googleSearchToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (textBox1.SelectionLength > 0)
+            {
+                string target = "http://google.com/search?q=";
+                target += textBox1.SelectedText;
+                System.Diagnostics.Process.Start(target);
+            }
         }
 
         private void findToolStripMenuItem_Click(object sender, EventArgs e)
@@ -522,6 +543,37 @@ namespace NotepadXD
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
             UpdateCaretPositionStatusLabel();
+        }
+
+        #endregion
+
+
+        #region "contextMenu Event Handlers"
+
+        private void contextMenuStrip1_Opened(object sender, EventArgs e)
+        {
+            bool textSelected = textBox1.SelectionLength > 0;
+            cutToolStripMenuItem1.Enabled = textSelected;
+            copyToolStripMenuItem1.Enabled = textSelected;
+            deleteToolStripMenuItem1.Enabled = textSelected;
+            googleSearchToolStripMenuItem1.Enabled = textSelected;
+            undoToolStripMenuItem1.Enabled = undoStack.Count > 0;
+            redoToolStripMenuItem1.Enabled = redoStack.Count > 0;
+        }
+
+        private void rightToLeftReadingOrderToolStripMenuItem_CheckStateChanged(object sender, EventArgs e)
+        {
+            if (rightToLeftReadingOrderToolStripMenuItem.Checked)
+            {
+                textBox1.RightToLeft = RightToLeft.Yes;
+                contextMenuStrip1.RightToLeft = RightToLeft.No;
+                panel1.Padding = new Padding(0, 0, 5, 0);
+            }
+            else
+            {
+                textBox1.RightToLeft = RightToLeft.No;
+                panel1.Padding = new Padding(5, 0, 0, 0);
+            }
         }
 
         #endregion
