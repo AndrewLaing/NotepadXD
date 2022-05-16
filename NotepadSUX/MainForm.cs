@@ -174,7 +174,7 @@ namespace NotepadXD
                 current_filename = openFileDialog1.FileName;
                 textBox1.Text = System.IO.File.ReadAllText(current_filename);
                 DoNewFileOpened();
-                undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart));
+                undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart, textBox1.SelectionLength));
             }
         }
 
@@ -235,7 +235,7 @@ namespace NotepadXD
                     RemoveItemsFromEndOfStack(undoStack, MAX_STACK_SIZE / 2);
                 }
                 undoToolStripMenuItem.Enabled = false;
-                redoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart));
+                redoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart, textBox1.SelectionLength));
                 undoStack.Pop()();
                 undoToolStripMenuItem.Enabled = true;
             }
@@ -246,7 +246,7 @@ namespace NotepadXD
             if (redoStack.Count > 0)
             {
                 redoToolStripMenuItem.Enabled = false;
-                undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart));
+                undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart, textBox1.SelectionLength));
                 redoStack.Pop()();
                 redoToolStripMenuItem.Enabled = true;
             }
@@ -256,7 +256,7 @@ namespace NotepadXD
         {
             if(textBox1.SelectedText != "")
             {
-                undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart));
+                undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart, textBox1.SelectionLength));
                 textBox1.Cut();
             }
         }
@@ -271,7 +271,7 @@ namespace NotepadXD
 
         private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart));
+            undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart, textBox1.SelectionLength));
             textBox1.Paste();
         }
 
@@ -287,7 +287,7 @@ namespace NotepadXD
                 }
                 
             }
-            undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart));
+            undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart, textBox1.SelectionLength));
             textBox1.Text = textBox1.Text.Remove(start, length);
             textBox1.SelectionStart = start;
             textBox1.SelectionLength = 0;
@@ -432,7 +432,7 @@ namespace NotepadXD
         private void timeDateToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string date = DateTime.Now.ToString("H:mm MM/dd/yy");
-            undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart));
+            undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart, textBox1.SelectionLength));
             textBox1.Paste(date);
         }
 
@@ -527,7 +527,7 @@ namespace NotepadXD
         private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
         {
             redoStack.Clear();
-            undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart));
+            undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart, textBox1.SelectionLength));
         }
 
         private void textBox1_MouseClick(object sender, MouseEventArgs e)
@@ -610,7 +610,7 @@ namespace NotepadXD
         {
             if(textBox1.SelectedText == replaceForm.get_findTextBox_Text())
             {
-                undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart));
+                undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart, textBox1.SelectionLength));
                 textBox1.SelectedText = replaceForm.get_replaceTextBox_Text();
             }
             replaceForm_findNextButton_Click(sender, e);
@@ -625,7 +625,7 @@ namespace NotepadXD
             {
                 if(textBox1.Text.IndexOf(search_term, 0, StringComparison.Ordinal) >= 0)
                 {
-                    undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart));
+                    undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart, textBox1.SelectionLength));
                     textBox1.Text = textBox1.Text.Replace(search_term, replace_term);
                     textBox1.SelectionStart = 0;
                     textBox1.SelectionLength = 0;
@@ -635,7 +635,7 @@ namespace NotepadXD
             {
                 if(textBox1.Text.IndexOf(search_term, 0, StringComparison.OrdinalIgnoreCase) >= 0)
                 {
-                    undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart));
+                    undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart, textBox1.SelectionLength));
                     textBox1.Text = Regex.Replace(textBox1.Text, search_term, replace_term,
                                                   RegexOptions.IgnoreCase);
                     textBox1.SelectionStart = 0;
@@ -652,12 +652,13 @@ namespace NotepadXD
         /// <summary>
         /// Used to store the text and cursor position from a textBox in the undo/redo stacks
         /// </summary>
-        public static Func<TextBox> Text(this TextBox textBox, string text, int selectionStart)
+        public static Func<TextBox> Text(this TextBox textBox, string text, int selectionStart, int selectionLength)
         {
             return () =>
             {
                 textBox.Text = text;
                 textBox.SelectionStart = selectionStart;
+                textBox.SelectionLength = selectionLength;
                 return textBox;
             };
         }
