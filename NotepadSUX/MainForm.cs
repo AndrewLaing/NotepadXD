@@ -451,8 +451,12 @@ namespace NotepadXD
 
         private void wordWrapToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
         {
+            float current_zoom = textBox1.ZoomFactor;
+
             textBox1.WordWrap = wordWrapToolStripMenuItem.Checked;
             UpdateCaretPositionStatusLabel();
+
+            textBox1.ZoomFactor = current_zoom;
         }
 
         private void fontToolStripMenuItem_Click(object sender, EventArgs e)
