@@ -581,21 +581,6 @@ namespace NotepadXD
             redoToolStripMenuItem1.Enabled = redoStack.Count > 0;
         }
 
-        private void rightToLeftReadingOrderToolStripMenuItem_CheckStateChanged(object sender, EventArgs e)
-        {
-            if (rightToLeftReadingOrderToolStripMenuItem.Checked)
-            {
-                textBox1.RightToLeft = RightToLeft.Yes;
-                contextMenuStrip1.RightToLeft = RightToLeft.No;
-                panel1.Padding = new Padding(0, 0, 5, 0);
-            }
-            else
-            {
-                textBox1.RightToLeft = RightToLeft.No;
-                panel1.Padding = new Padding(5, 0, 0, 0);
-            }
-        }
-
         #endregion
 
 
