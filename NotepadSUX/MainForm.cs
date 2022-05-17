@@ -12,7 +12,8 @@ namespace NotepadXD
         private const String DEFAULT_APPNAME = "NotepadXD";
         private const float MIN_TEXTBOX_FONTSIZE = 8;
         private const int MAX_STACK_SIZE = 1000;
-        private const float MAX_ZOOM_FACTOR = 5.0f; // 500%
+        private const int MIN_ZOOM_FACTOR = 10;  // 10%
+        private const int MAX_ZOOM_FACTOR = 500; // 500%
 
         private AboutForm aboutform;
         private FindForm findForm;
@@ -156,9 +157,13 @@ namespace NotepadXD
         {
             if(ContinueWorkingOnCurrentDocument(sender, e) == false)
             {
+                float current_zoom = textBox1.ZoomFactor;  // richtextbox zoom resets on cleared!!
+
                 current_filename = DEFAULT_FILENAME;
                 textBox1.Text = "";
                 DoNewFileOpened();
+
+                textBox1.ZoomFactor = current_zoom;
             }
         }
 
@@ -230,6 +235,8 @@ namespace NotepadXD
         {
             if (undoStack.Count > 0)
             {
+                float current_zoom = textBox1.ZoomFactor;
+
                 if(undoStack.Count >= MAX_STACK_SIZE)
                 {
                     RemoveItemsFromEndOfStack(undoStack, MAX_STACK_SIZE / 2);
@@ -238,6 +245,8 @@ namespace NotepadXD
                 redoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart, textBox1.SelectionLength));
                 undoStack.Pop()();
                 undoToolStripMenuItem.Enabled = true;
+
+                textBox1.ZoomFactor = current_zoom;
             }
         }
 
@@ -245,10 +254,14 @@ namespace NotepadXD
         {
             if (redoStack.Count > 0)
             {
+                float current_zoom = textBox1.ZoomFactor;
+
                 redoToolStripMenuItem.Enabled = false;
                 undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart, textBox1.SelectionLength));
                 redoStack.Pop()();
                 redoToolStripMenuItem.Enabled = true;
+
+                textBox1.ZoomFactor = current_zoom;
             }
         }
 
@@ -433,7 +446,7 @@ namespace NotepadXD
         {
             string date = DateTime.Now.ToString("H:mm MM/dd/yy");
             undoStack.Push(textBox1.Text(textBox1.Text, textBox1.SelectionStart, textBox1.SelectionLength));
-            textBox1.Paste(date);
+            textBox1.SelectedText = date;
         }
 
         private void wordWrapToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
@@ -453,36 +466,38 @@ namespace NotepadXD
             }
         }
 
-        private void UpdateZoomStatusLabel(float newFontSize)
+        private void UpdateZoomStatusLabel()
         {
-            int percentage_of_original = (int)(newFontSize * (100.0 / current_textbox_fontsize)) ;
-            zoomStatusLabel.Text = percentage_of_original + "%";
+            float factor = textBox1.ZoomFactor * 100;
+            zoomStatusLabel.Text = factor + "%";
         }
 
         private void zoomInToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            float newFontSize = (textBox1.Font.Size + 1);
-            if(newFontSize < (current_textbox_fontsize * MAX_ZOOM_FACTOR))
+            int temp = (int)(textBox1.ZoomFactor * 100 + 10);
+            if (temp > MAX_ZOOM_FACTOR)
             {
-                textBox1.Font = new Font(textBox1.Font.FontFamily, newFontSize);
-                UpdateZoomStatusLabel(newFontSize);
+                return;
             }
+            textBox1.ZoomFactor = (float)Math.Round(temp/100f,1);  // correct floating point error
+            UpdateZoomStatusLabel();
         }
 
         private void zoomOutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            float newFontSize = (textBox1.Font.Size - 1);
-            if(newFontSize > MIN_TEXTBOX_FONTSIZE)
+            int temp = (int)(textBox1.ZoomFactor * 100 - 10);
+            if(temp < MIN_ZOOM_FACTOR)
             {
-                textBox1.Font = new Font(textBox1.Font.FontFamily, newFontSize);
-                UpdateZoomStatusLabel(newFontSize);
+                return;
             }
+            textBox1.ZoomFactor = (float)Math.Round(temp / 100f, 1);
+            UpdateZoomStatusLabel();
         }
 
         private void restoreDefaultZoomToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            textBox1.Font = new Font(textBox1.Font.FontFamily, (current_textbox_fontsize));
-            UpdateZoomStatusLabel(current_textbox_fontsize);
+            textBox1.ZoomFactor = 1f;
+            UpdateZoomStatusLabel();
         }
 
         private void viewStatusBarToolStripMenuItem_CheckStateChanged(object sender, EventArgs e)
@@ -506,6 +521,11 @@ namespace NotepadXD
 
 
         #region "textBox1 Event Handlers"
+
+        private void textBox1_ContentsResized(object sender, ContentsResizedEventArgs e)
+        {
+            UpdateZoomStatusLabel();
+        }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
@@ -645,6 +665,7 @@ namespace NotepadXD
         }
 
         #endregion
+
     }
 
     public static class Extensions
@@ -652,7 +673,7 @@ namespace NotepadXD
         /// <summary>
         /// Used to store the text and cursor position from a textBox in the undo/redo stacks
         /// </summary>
-        public static Func<TextBox> Text(this TextBox textBox, string text, int selectionStart, int selectionLength)
+        public static Func<RichTextBox> Text(this RichTextBox textBox, string text, int selectionStart, int selectionLength)
         {
             return () =>
             {
