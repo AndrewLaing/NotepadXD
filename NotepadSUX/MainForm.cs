@@ -24,12 +24,15 @@ namespace NotepadXD
 
         private float current_textbox_fontsize;
 
+        private string stringToPrint;
+
         private Stack<Func<object>> undoStack = new Stack<Func<object>>();
         private Stack<Func<object>> redoStack = new Stack<Func<object>>();
 
         public MainForm()
         {
             InitializeComponent();
+            InitialisePrinting();
             current_filename = DEFAULT_FILENAME;
             UpdateMainFormText();
             current_textbox_fontsize = textBox1.Font.Size;
@@ -37,6 +40,13 @@ namespace NotepadXD
         }
 
         #region "Helper functions"
+
+        private void InitialisePrinting()
+        {
+            pageSetupDialog1.Document = printDocument1;
+            printDialog1.Document = printDocument1;
+            printPreviewDialog1.Document = printDocument1;
+        }
 
         private void InitialiseSecondaryForms()
         {
@@ -139,7 +149,6 @@ namespace NotepadXD
             if (ContinueWorkingOnCurrentDocument(sender, e))
             {
                 e.Cancel = true;
-                return;
             }
         }
 
@@ -655,6 +664,54 @@ namespace NotepadXD
 
         #endregion
 
+
+        #region "Printing Event Handlers"
+
+        private void printDocument1_BeginPrint(object sender, System.Drawing.Printing.PrintEventArgs e)
+        {
+            stringToPrint = textBox1.Text;
+        }
+
+        private void printDocument1_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
+        {
+            int charactersOnPage = 0;
+            int linesPerPage = 0;
+
+            e.Graphics.MeasureString(stringToPrint, textBox1.Font,
+                e.MarginBounds.Size, StringFormat.GenericTypographic,
+                out charactersOnPage, out linesPerPage);
+
+            // Draws the string within the bounds of the page
+            e.Graphics.DrawString(stringToPrint, textBox1.Font, Brushes.Black,
+                e.MarginBounds, StringFormat.GenericTypographic);
+
+            stringToPrint = stringToPrint.Substring(charactersOnPage);
+            e.HasMorePages = (stringToPrint.Length > 0);
+        }
+
+        private void pageSetupToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            stringToPrint = textBox1.Text;
+            pageSetupDialog1.PageSettings = new System.Drawing.Printing.PageSettings();
+            pageSetupDialog1.PrinterSettings = new System.Drawing.Printing.PrinterSettings();
+            pageSetupDialog1.ShowDialog();
+        }
+
+        private void printToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (printDialog1.ShowDialog() == DialogResult.OK)
+            {
+                printDocument1.Print();
+            }
+        }
+
+        private void printPreviewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            stringToPrint = textBox1.Text;
+            printPreviewDialog1.ShowDialog();
+        }
+
+        #endregion
     }
 
     public static class Extensions
